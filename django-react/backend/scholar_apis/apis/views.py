@@ -7,7 +7,7 @@ from .serializers import AuthorSerializer
 
 @api_view(('GET',))
 def AllAuthors(req):
-    authors = Author.objects.raw('SELECT name, affiliation FROM Authors')
+    authors = Author.objects.raw('SELECT id, name, affiliation FROM Authors')
     serializer = AuthorSerializer(authors, many=True)
     return Response(serializer.data)
 @api_view(('GET',))
