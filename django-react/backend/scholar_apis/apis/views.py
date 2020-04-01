@@ -95,7 +95,7 @@ def AddArticle(req):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+# update article
 @api_view(('PUT',))
 def UpdateArticle(req):
     serializer = ArticleSerializer(data=req.data)
@@ -104,13 +104,12 @@ def UpdateArticle(req):
             sql, values = update_article_sql(serializer.data)
             if(sql is None or values is None):
                 return Response("Can only update optional article fields", status=status.HTTP_400_BAD_REQUEST)
-            #print(sql)
-            #print(values)
             cursor.execute(sql, values)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# delete authors, articles
 @api_view(('DELETE',))
 def DeleteAuthor(req):
     serializer = AuthorSerializer(data=req.data)
@@ -179,13 +178,3 @@ def update_article_sql(cereal):
     values.append(cereal['affiliation'].replace('+', ' '))
     values.append(cereal['pub_title'].replace('+', ' '))
     return sql, values
-
-# class AllAuthors(generics.ListCreateAPIView):
-#     authors = Author.objects.raw('SELECT id, name, affiliation FROM Authors')
-#     serializer_class = AuthorSerializer
-#
-#
-# class AuthorById(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Author.objects.all()
-#     #print("result: " + str(queryset))
-#     serializer_class = AuthorSerializer
