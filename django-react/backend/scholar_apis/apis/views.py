@@ -9,7 +9,6 @@ from django.db import connection
 #views for fetching authors
 @api_view(('GET',))
 def AllAuthors(req):
-    print(type(req))
     authors = Author.objects.raw('SELECT * FROM Authors')
     serializer = AuthorSerializer(authors, many=True)
     return Response(serializer.data)
@@ -66,7 +65,6 @@ def ArticlesByNameAffiliation(req, name, affiliation):
 @api_view(('GET',))
 def ArticlesByJournal(req, journal):
     journal = journal.replace('+', ' ').lower()
-    print('journal: ' + str(journal))
     articles = Article.objects.raw('SELECT * FROM Articles WHERE LOWER(journal) = %s', [journal])
     serializer = ArticleSerializer(articles, many=True)
     return Response(serializer.data)
@@ -75,22 +73,58 @@ def ArticlesByJournal(req, journal):
 @api_view(('POST',))
 def AddAuthor(req):
     serializer = AuthorSerializer(data=req.data)
-    #print(str(req.getParameter("name")))
     if(serializer.is_valid()):
         with connection.cursor() as cursor:
-            print(type(serializer.data))
-            name = serializer.data['name']
+            name = serializer.data['name'].lower()
             affiliation = serializer.data['affiliation']
             name = name.replace('+', ' ')
             affiliation = affiliation.replace('+', ' ')
-            cursor.exeute("INSERT INTO AUTHORS(name, affiliation) VALUES (%s, %s )", [name, affiliation])
-        return Response(serializer.data)
+            cursor.execute("INSERT INTO AUTHORS(name, affiliation) VALUES (%s, %s )", [name, affiliation])
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def create_author_article(cereal):
+@api_view(('POST',))
+def AddArticle(req):
+    serializer = ArticleSerializer(data=req.data)
+    if(serializer.is_valid()):
+        with connection.cursor() as cursor:
+            sql, values = create_article_sql(serializer.data)
+            cursor.execute(sql, values)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(('DELETE',))
+def DeleteAuthor(req):
+    serializer = AuthorSerializer(data=req.data)
+    if(serializer.is_valid()):
+        with connection.cursor() as cursor:
+            name = serializer.data['name']
+            affiliation = serializer.data['affiliation']
+            name = name.replace('+', ' ').lower()
+            affiliation = affiliation.replace('+', ' ').lower()
+            cursor.execute("DELETE FROM AUTHORS WHERE LOWER(name) = %s AND LOWER(affiliation) = %s", [name, affiliation])
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(('DELETE',))
+def DeleteArticle(req):
+    serializer = ArticleSerializer(data=req.data)
+    if(serializer.is_valid()):
+        with connection.cursor() as cursor:
+            sql, values = delete_article_sql(serializer.data)
+            print(sql)
+            print(values)
+            cursor.execute(sql, values)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def create_article_sql(cereal):
     author_fields = ['affiliation', 'pub_title', 'pub_year', 'pub_url', 'citations', 'citedby', 'journal','pub_author']
-    sql = 'INSERT INTO ARTICLES(name'
+    sql = 'INSERT INTO Articles(name'
     form = " VALUES (%s"
     values = [cereal['name'].replace("+", ' ')]
     for field in author_fields:
@@ -101,22 +135,17 @@ def create_author_article(cereal):
     sql += ')'
     form += ')'
     result = sql + form
-    return result, values;
+    return result, values
 
-@api_view(('POST',))
-def AddArticle(req):
-    serializer = ArticleSerializer(data=req.data)
-    #print(str(req.getParameter("name")))
-    if(serializer.is_valid()):
-        with connection.cursor() as cursor:
-            print("SUCCESS!")
-            sql, values = create_author_article(serializer.data)
-            print(sql)
-            print(values)
-            cursor.execute(sql, values)
-        return Response(serializer.data)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def delete_article_sql(cereal):
+    author_fields = ['affiliation', 'pub_title', 'pub_year', 'pub_url', 'citations', 'citedby', 'journal','pub_author']
+    sql = 'DELETE FROM Articles WHERE LOWER(name) = %s'
+    values = [cereal['name'].replace("+", ' ').lower()]
+    for field in author_fields:
+        if(field in cereal):
+            values.append(cereal[field].replace('+', ' ').lower())
+            sql += ' AND LOWER(' + field + ") = %s"
+    return sql, values
 
 # class AllAuthors(generics.ListCreateAPIView):
 #     authors = Author.objects.raw('SELECT id, name, affiliation FROM Authors')

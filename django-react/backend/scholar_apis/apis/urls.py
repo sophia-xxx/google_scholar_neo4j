@@ -21,8 +21,8 @@ urlpatterns = [
 
     #@TODO: update author necessary?
 
-    # delete article
-
-    # delete author
+    # delete article, author
+    path('authors/remove', views.DeleteAuthor),
+    path('articles/remove', views.DeleteArticle),
 
 ]
