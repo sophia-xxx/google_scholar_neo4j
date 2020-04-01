@@ -25,7 +25,7 @@ class App extends Component {
 
   async componentDidMount() {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/author/all');
+      const res = await fetch('http://127.0.0.1:8000/api/authors/all');
       const data = await res.json();
       console.log("api success!");
       this.setState({
