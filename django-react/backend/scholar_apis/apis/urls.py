@@ -18,11 +18,11 @@ urlpatterns = [
     path('authors/add', views.AddAuthor),
     path('articles/add', views.AddArticle),
     # update article
-
+    path('articles/update', views.UpdateArticle),
     #@TODO: update author necessary?
 
     # delete article, author
-    path('authors/remove', views.DeleteAuthor),
-    path('articles/remove', views.DeleteArticle),
+    path('authors/delete', views.DeleteAuthor),
+    path('articles/delete', views.DeleteArticle),
 
 ]

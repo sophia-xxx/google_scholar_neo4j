@@ -95,6 +95,22 @@ def AddArticle(req):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(('PUT',))
+def UpdateArticle(req):
+    serializer = ArticleSerializer(data=req.data)
+    if(serializer.is_valid()):
+        with connection.cursor() as cursor:
+            sql, values = update_article_sql(serializer.data)
+            if(sql is None or values is None):
+                return Response("Can only update optional article fields", status=status.HTTP_400_BAD_REQUEST)
+            #print(sql)
+            #print(values)
+            cursor.execute(sql, values)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(('DELETE',))
 def DeleteAuthor(req):
     serializer = AuthorSerializer(data=req.data)
@@ -123,11 +139,11 @@ def DeleteArticle(req):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def create_article_sql(cereal):
-    author_fields = ['affiliation', 'pub_title', 'pub_year', 'pub_url', 'citations', 'citedby', 'journal','pub_author']
+    article_fields = ['affiliation', 'pub_title', 'pub_year', 'pub_url', 'citations', 'citedby', 'journal','pub_author']
     sql = 'INSERT INTO Articles(name'
     form = " VALUES (%s"
     values = [cereal['name'].replace("+", ' ')]
-    for field in author_fields:
+    for field in article_fields:
         if(field in cereal):
             values.append(cereal[field].replace('+', ' '))
             sql += ', ' + field
@@ -138,13 +154,30 @@ def create_article_sql(cereal):
     return result, values
 
 def delete_article_sql(cereal):
-    author_fields = ['affiliation', 'pub_title', 'pub_year', 'pub_url', 'citations', 'citedby', 'journal','pub_author']
+    article_fields = ['affiliation', 'pub_title', 'pub_year', 'pub_url', 'citations', 'citedby', 'journal','pub_author']
     sql = 'DELETE FROM Articles WHERE LOWER(name) = %s'
     values = [cereal['name'].replace("+", ' ').lower()]
-    for field in author_fields:
+    for field in article_fields:
         if(field in cereal):
             values.append(cereal[field].replace('+', ' ').lower())
             sql += ' AND LOWER(' + field + ") = %s"
+    return sql, values
+
+def update_article_sql(cereal):
+    optional_article_fields = ['pub_year', 'pub_url', 'citations', 'citedby', 'journal','pub_author']
+    values = []
+    sql = 'SET '
+    for field in optional_article_fields:
+        if(field in cereal):
+            values.append(cereal[field].replace('+', ' '))
+            sql += field + ' = %s '
+    # there are no optional parameters to update
+    if(len(values) == 0):
+        return None, None
+    sql = 'UPDATE Articles ' + sql + "WHERE " + 'name = %s AND affiliation = %s AND pub_title = %s'
+    values.append(cereal['name'].replace('+', ' '))
+    values.append(cereal['affiliation'].replace('+', ' '))
+    values.append(cereal['pub_title'].replace('+', ' '))
     return sql, values
 
 # class AllAuthors(generics.ListCreateAPIView):
