@@ -36,3 +36,4 @@ class ArticleSerializer(serializers.Serializer):
     #         'pub_author',
     #     )
     #     model = Article
+

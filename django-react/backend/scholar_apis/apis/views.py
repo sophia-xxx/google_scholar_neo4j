@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view
 from .models import Author, Article
 from .serializers import AuthorSerializer, ArticleSerializer
 from django.db import connection
+import json
+
 
 #views for fetching authors
 @api_view(('GET',))
@@ -68,6 +70,31 @@ def ArticlesByJournal(req, journal):
     articles = Article.objects.raw('SELECT * FROM Articles WHERE LOWER(journal) = %s', [journal])
     serializer = ArticleSerializer(articles, many=True)
     return Response(serializer.data)
+
+# complex sql search query
+# join topics and articles table
+@api_view(('GET',))
+def TopicDetailByName(req,topic):
+    data={}
+    results=[]
+    topic = topic.replace('+', ' ').lower()
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT id,pub_title,pub_year,pub_url '
+            'FROM Topics LEFT JOIN Articles ON Topics.article_id=Articles.id WHERE Topics.assumed_topic = %s', [topic])
+        topics=cursor.fetchall()
+    for t in topics:
+        result = {}
+        result['id']=t[0]
+        result['pub_title']=t[1]
+        result['pub_year'] = t[2]
+        result['pub_url'] = t[3]
+        results.append(result)
+    # data['code']=0
+    # data['results']=results
+    # jsonResult=json.dumps(topics)
+    return Response(results)
+
 
 #create author, article
 @api_view(('POST',))
@@ -179,12 +206,3 @@ def update_article_sql(cereal):
     values.append(cereal['pub_title'].replace('+', ' '))
     return sql, values
 
-@api_view(('GET',))
-def TopicDetailByName(req,topic):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            'SELECT Articles.id as id,Articles.pub_title as title '
-            'FROM Topics LEFT JOIN Articles ON Topics.article_id=Articles.id WHERE Topics.assumed_topic = %s', [topic])
-        data=cursor.fetchall()
-
-    return Response(data)
