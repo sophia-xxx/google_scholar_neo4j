@@ -178,3 +178,12 @@ def update_article_sql(cereal):
     values.append(cereal['affiliation'].replace('+', ' '))
     values.append(cereal['pub_title'].replace('+', ' '))
     return sql, values
+
+@api_view(('GET',))
+def TopicDetailByName(req,topic):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT Articles.id as id,Articles.pub_title as title '
+            'FROM Topics LEFT JOIN Articles ON Topics.article_id=Articles.id'
+            'WHERE Topics.assumed_topic = %s', [topic])
+    print(cursor.fetchall())
