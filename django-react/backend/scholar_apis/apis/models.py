@@ -29,7 +29,7 @@ class Article(models.Model):
 
 class Topics(models.Model):
     assumed_topic=models.TextField()
-    author_id=models.ForeignKey(Article,to_field="id",on_delete=models.SET_NULL)
+    author_id=models.ForeignKey(Article,to_field="id",on_delete=models.CASCADE)
     def __str__(self):
         """A string representation of the model."""
         return self.assumed_topic

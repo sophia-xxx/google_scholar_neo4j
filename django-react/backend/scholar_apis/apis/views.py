@@ -184,6 +184,7 @@ def TopicDetailByName(req,topic):
     with connection.cursor() as cursor:
         cursor.execute(
             'SELECT Articles.id as id,Articles.pub_title as title '
-            'FROM Topics LEFT JOIN Articles ON Topics.article_id=Articles.id'
-            'WHERE Topics.assumed_topic = %s', [topic])
-    print(cursor.fetchall())
+            'FROM Topics LEFT JOIN Articles ON Topics.article_id=Articles.id WHERE Topics.assumed_topic = %s', [topic])
+        data=cursor.fetchall()
+
+    return Response(data)
