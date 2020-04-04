@@ -62,6 +62,9 @@ finds article(s) by name and affiliation <br />
 `127.0.0.1:8000/api/articles/journal=<str:journal` <br />
 finds article(s) by journal <br />
 
+#### Topics
+`127.0.0.1:8000/api/topics/topic=<str:topic>` <br />
+join topics and articles tables and finds all the articles in same topic  <br />
 
 ## APIS - Create
 **these require that you POST to url**
