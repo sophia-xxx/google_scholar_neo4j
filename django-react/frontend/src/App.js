@@ -1,4 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import Header from './components/header';
+import Home from "./components/Home";
+
+
+
 
 // const list = [
 //   {
@@ -19,33 +24,18 @@ import React, { Component } from 'react';
 // ];
 
 class App extends Component {
-  state = {
-    data: []
-  };
+  
 
-  async componentDidMount() {
-    try {
-      const res = await fetch('http://127.0.0.1:8000/api/authors/all');
-      const data = await res.json();
-      console.log("api success!");
-      this.setState({
-        data
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  
 
   render() {
     console.log("rendering!");
     return (
       <div>
-        {this.state.data.map(item => (
-          <div key={item.id}>
-            <h1>{item.name}</h1>
-            <span>{item.affiliation}</span>
-          </div>
-        ))}
+        <Fragment>
+          <Header/>
+          <Home/>
+        </Fragment>
       </div>
     );
   }
