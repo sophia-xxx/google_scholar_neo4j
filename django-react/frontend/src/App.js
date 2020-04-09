@@ -28,32 +28,10 @@ import axios from "axios";
 
 class App extends Component {
   state = {
-    data: [],
-    data2:[]
-  };
-
-  async componentDidMount() {
+    data: []
     
-    try {
-      const res = await fetch('http://127.0.0.1:8000/api/authors/all');
-      const data = await res.json();
-      console.log("api success!");
-      this.setState({
-        data
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  async displayAuthors(inputName){
-    inputName = inputName.split(' ').join('+');
-    const res = await fetch('http://127.0.0.1:8000/api/authors/name=' + inputName);
-    const data = await res.json();
-    this.setState({
-      data2:data
-    });
   };
+
 
   render() {
     console.log("rendering!");
@@ -68,13 +46,6 @@ class App extends Component {
     
         <Home/>
         </Fragment>
-
-        {this.state.data.map(item => (
-          <div key={item.id}>
-            <h1>{item.name}</h1>
-            <span>{item.affiliation}</span>
-          </div>
-        ))}
       </div>
     );
   }
