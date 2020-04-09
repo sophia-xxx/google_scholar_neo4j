@@ -1,4 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { homedir } from 'os';
+import Home from './components/Home'
+import Head from './components/header'
+import AuthorList from './components/authorList'
+import './App.css'
+
+import axios from "axios";
+
 
 // const list = [
 //   {
@@ -20,10 +28,12 @@ import React, { Component } from 'react';
 
 class App extends Component {
   state = {
-    data: []
+    data: [],
+    data2:[]
   };
 
   async componentDidMount() {
+    
     try {
       const res = await fetch('http://127.0.0.1:8000/api/authors/all');
       const data = await res.json();
@@ -36,10 +46,29 @@ class App extends Component {
     }
   }
 
+  async displayAuthors(inputName){
+    inputName = inputName.split(' ').join('+');
+    const res = await fetch('http://127.0.0.1:8000/api/authors/name=' + inputName);
+    const data = await res.json();
+    this.setState({
+      data2:data
+    });
+  };
+
   render() {
     console.log("rendering!");
     return (
       <div>
+        
+        <Fragment>
+
+        <Head/>
+        <AuthorList/>
+
+    
+        <Home/>
+        </Fragment>
+
         {this.state.data.map(item => (
           <div key={item.id}>
             <h1>{item.name}</h1>
@@ -50,6 +79,15 @@ class App extends Component {
     );
   }
 }
+
+
+
+// {this.state.data.map(item => (
+//  <div key={item.id}>
+//  <h1>{item.name}</h1>
+// <span>{item.affiliation}</span>
+//</div>
+//))}
 // import React from 'react';
 // import logo from './logo.svg';
 // import './App.css';
