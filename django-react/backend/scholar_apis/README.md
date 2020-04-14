@@ -120,3 +120,9 @@ data must include article mandatory fields, format (same as update/create): `nam
 * should we required all new inserted articles have their corresponding author in authors table? (i think yes)
   ** this is not currently implemented
 * username/password authentication for CREATE/UPDATE/DELETE queries?
+
+## SQLite data migrate to neo4j
+* pip install py2neo <br />
+* open neo4j, create new database, then set username and password. The default value of username and password are all 'neo4j'. <br />
+* modify the conneciton username and password in migrate_data.py </br>
+* in project file, run command >python3 migrate_data.py <br />
