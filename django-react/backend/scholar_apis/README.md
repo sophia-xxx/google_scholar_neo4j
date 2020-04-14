@@ -123,6 +123,6 @@ data must include article mandatory fields, format (same as update/create): `nam
 
 ## SQLite data migrate to neo4j
 * pip install py2neo <br />
-* open neo4j, then set username and password <br />
+* open neo4j, create new database, then set username and password. The default value of username and password are all 'neo4j'. <br />
 * modify the conneciton username and password in migrate_data.py </br>
 * in project file, run command >python3 migrate_data.py <br />
