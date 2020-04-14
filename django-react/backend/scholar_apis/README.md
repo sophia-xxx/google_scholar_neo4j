@@ -122,6 +122,10 @@ data must include article mandatory fields, format (same as update/create): `nam
 * username/password authentication for CREATE/UPDATE/DELETE queries?
 
 ## SQLite data migrate to neo4j
+I implemented the migration by merge, so you can run the migration as many times as you want, without worries about duplicate nodes and relations.
+The main relations in neo4j is (:Author)-[:InterestedIn]->(:Interest) and (:Article)-[:About]->(:Topic).
+
+#### Steps：
 * pip install py2neo <br />
 * open neo4j, create new database, then set username and password. The default value of username and password are all 'neo4j'. <br />
 * modify the conneciton username and password in migrate_data.py </br>
