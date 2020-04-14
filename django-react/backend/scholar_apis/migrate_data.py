@@ -93,5 +93,5 @@ def main():
     create_interest_node(graph,conn)
     create_topic_node(graph,conn)
     create_relations(graph)
-    print("migration done")
+
 main()
