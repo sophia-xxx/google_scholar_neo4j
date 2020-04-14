@@ -120,3 +120,6 @@ data must include article mandatory fields, format (same as update/create): `nam
 * should we required all new inserted articles have their corresponding author in authors table? (i think yes)
   ** this is not currently implemented
 * username/password authentication for CREATE/UPDATE/DELETE queries?
+
+## SQLite data migrate to neo4j
+
