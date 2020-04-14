@@ -122,7 +122,7 @@ data must include article mandatory fields, format (same as update/create): `nam
 * username/password authentication for CREATE/UPDATE/DELETE queries?
 
 ## SQLite data migrate to neo4j
-I implemented the migration by merge, so you can run the migration as many times as you want, without worries about duplicate nodes and relations.
+I implemented the migration by merge, so you can run the migration as many times as you want, without worries about duplicate nodes and relations. <br />
 The main relations in neo4j is (:Author)-[:InterestedIn]->(:Interest) and (:Article)-[:About]->(:Topic).
 
 #### Steps：
