@@ -122,4 +122,7 @@ data must include article mandatory fields, format (same as update/create): `nam
 * username/password authentication for CREATE/UPDATE/DELETE queries?
 
 ## SQLite data migrate to neo4j
-
+* pip install py2neo <br />
+* open neo4j, then set username and password <br />
+* modify the conneciton username and password in migrate_data.py </br>
+* in project file, run command >python3 migrate_data.py <br />
